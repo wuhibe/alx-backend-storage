@@ -1,17 +1,15 @@
 -- 7. Average score
 -- create a stored procedure that computes and store the average score for a student
-DROP PROCEDURE IF EXISTS ComputeAverageScoreForUser;
 DELIMITER |
+DROP PROCEDURE IF EXISTS ComputeAverageScoreForUser;
 CREATE PROCEDURE ComputeOverallScoreForUser (
     IN user_id int
 )
 BEGIN
     UPDATE users
-    SET overall_score = (
+    SET average_score = (
         SELECT AVG(score) FROM corrections
-        WHERE corrections.user_id = user_id
-        GROUP BY corrections.user_id
-    )
+        WHERE corrections.user_id = user_id)
     WHERE id = user_id;
 END;
 |
