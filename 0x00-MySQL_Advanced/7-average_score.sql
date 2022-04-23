@@ -1,5 +1,6 @@
 -- 7. Average score
 -- create a stored procedure that computes and store the average score for a student
+DROP PROCEDURE IF EXISTS ComputeAverageScoreForUser;
 DELIMITER |
 CREATE PROCEDURE ComputeOverallScoreForUser (
     IN user_id int
