@@ -3,4 +3,4 @@
 CREATE TRIGGER decr_count BEFORE INSERT ON orders
 FOR EACH ROW
     UPDATE items SET quantity = quantity - 1
-        WHERE name = orders.item_name;
+        WHERE name = NEW.item_name;
