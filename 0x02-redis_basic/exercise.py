@@ -15,7 +15,7 @@ class Cache:
     def store(self, data: typing.Union[bytes, int, str, float]) -> str:
         ''' method that stores key-value pairs '''
         id: str = str(uuid.uuid4())
-        self._redis.mset({id: data})
+        self._redis.set(id, data)
         return id
 
     def get(self, key, fn: typing.Optional[typing.Callable]
