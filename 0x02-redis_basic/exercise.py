@@ -6,15 +6,31 @@ import uuid
 from functools import wraps
 
 
-def count_calls(fn: Callable) -> Callable:
-    ''' counter for number of calls to Cache class '''
-    key = fn.__qualname__
+def call_history(method: Callable) -> Callable:
+    """ store the history of inputs and outputs for a particular function """
+    key = method.__qualname__
+    inputs = key + ":inputs"
+    outputs = key + ":outputs"
 
-    @wraps(fn)
+    @wraps(method)
     def wrapper(self, *args, **kwds):
-        ''' method to call decorated fn '''
+        """ wrapped function """
+        self._redis.rpush(inputs, str(args))
+        data = method(self, *args, **kwds)
+        self._redis.rpush(outputs, str(data))
+        return data
+    return wrapper
+
+
+def count_calls(method: Callable) -> Callable:
+    """ to count how many times methods of the Cache class are called """
+    key = method.__qualname__
+
+    @wraps(method)
+    def wrapper(self, *args, **kwds):
+        """ wrapped function """
         self._redis.incr(key)
-        return fn(self, *args, **kwds)
+        return method(self, *args, **kwds)
     return wrapper
 
 
@@ -25,6 +41,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @call_history
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         ''' method that stores key-value pairs '''
