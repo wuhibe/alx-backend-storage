@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 ''' Exercise module '''
-from functools import wraps
 from typing import Union, Optional, Callable
 import redis
 import uuid
+from functools import wraps
 
 
 def count_calls(fn: Callable) -> Callable:
