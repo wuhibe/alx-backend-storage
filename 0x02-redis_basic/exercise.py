@@ -1,8 +1,21 @@
 #!/usr/bin/env python3
 ''' Exercise module '''
+from functools import wraps
 from typing import Union, Optional, Callable
 import redis
 import uuid
+
+
+def count_calls(fn: Callable) -> Callable:
+    ''' counter for number of calls to Cache class '''
+    key = fn.__qualname__
+
+    @wraps(fn)
+    def wrapper(self, *args, **kwds):
+        ''' method to call decorated fn '''
+        self._redis.incr(key)
+        return fn(self, *args, **kwds)
+    return wrapper
 
 
 class Cache:
@@ -12,6 +25,7 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         ''' method that stores key-value pairs '''
         id: str = str(uuid.uuid4())
